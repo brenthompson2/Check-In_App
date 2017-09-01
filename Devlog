@@ -1,0 +1,344 @@
+Devlog
+Brendan Thompson
+
+A log of activities as I learned to develop mobile applications using Ionic
+
+=========================================
+=========================================
+
+
+
+=========================================
+=========================================
+
+08/31/17
+
+Summary:
+	- Created a GitHub Search app
+Thoughts:
+	- There seems to be an unnecessary amount of abstraction for everything
+	- I feel like I am using so many things that are popular but I don't even realize it. (Ionic, Angular 2, TypeScript, JavaScript, JSON, HTML, CSS, SCSS, PHP?, ???)
+
+- Following a Tutorial:
+	- https://scoth.io/tutorials/create-your-first-mobile-app-with-angularjs-and-ionic
+		I) What Really is Ionic?
+			- front-end SDK for building cross-platform movile apps. Built on top of Angular, ionic also provides a platform for integrating services like push notifications and analytics.
+			- UI library to make a better Cordova project
+			- Like Bootstrap or Foundation but for mobile instead of web
+			- "I will also explain how to build mobile apps with Phonegap app so we won't have to bother with Platform SDKs"
+		II) Creating a Project
+			ionic start {appname} {template}
+				- can also be a github URL to a custom template
+			ionic cordova platform add ios
+			ionic cordova platform add android
+			ionic serve --lab -> emulates it on the web and lab to preview better as mobile app (not recommended)
+	- https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angular-2
+		- Part 2:
+			- Ionic Package or PhoneGap Build will compile and sign your apps in the cloud
+			- Genymotion: 3000+ Android configurations to emulate & test
+				- Uses Virtual Box
+		- Part 3 - TypeScript & ES6:
+			- ECMAScript 5 is the currently supported JavaScript version in all browsers
+				- Possibly using at least ES6 (ES2015) now
+					- adds classes, arrow functions, and module loaders
+			** TypeScript is a superset of ES6 and adds the ability to declare variables as a specific type
+				- typed:
+					var index: number;
+					index = 'a string'
+						- error
+				- classes:
+					THE TYPESCRIPT:
+						class User {
+							name: string;
+
+							constructor(name: string){
+								this.name = name
+							}
+
+							sayHello(){
+								console.log('Hello, I am', this.name);
+							}
+						}
+						var user = new User('Ashteya');
+						user.sayHello();
+					TYPESCRIPT COMPILED INTO ES5
+						var User = (function () {
+							function User(name) {
+								this.name = name;
+							}
+							User.prototype.sayHello = function () {
+								console.log('Hello, I am', this.name);
+							};
+							return User;
+						})();
+						var user = new User('Ashteya');
+						user.sayHello();
+				- Arrow Functions:
+					- new, shorter syntax for writing anonymous functions
+					ES5 Code:
+						function updateTime() {
+							var _this = this;
+							var time = new Date();
+							setInterval(function (){ return _this.time = new Date(); }, 1000)
+						}
+					ARROW FUNCTION:
+						function updateTime() {
+							var time = new Date();
+							setInterval(() => this.time = new Date(), 1000)
+						}
+				- javascript looks disgusting
+		- Part 4 - Angular 2
+			- open-source framework for building (web) applications
+			- takes care of navigation, data binding, dependency injection, and much more
+			- http://angular.io -> 5 minute QuickStart & Tutorial
+			- Components:
+				- implements a view or part of a view (displaying and managing)
+				import (Component) from 'angular2/core';
+
+				@Component({
+					selector: 'current-time';
+					template: <h1>Time: {{time}}</h1>
+				})
+				export class CurentTime {
+					time: Date;
+
+					constructor() {
+						this.time = new Date();
+						setInterval(() => this.time = new Date(), 1000);
+					}
+				}
+			- Decorators:
+				-new concept in TypeScript (and ES7/ES2016) for adding functionality to a class
+				- @Component decorator is implemented within the Angular 2 framework.
+					- takes care of coupling the class to a view template, data binding, dependency injection, etc.
+				- selector is set to current-time, so:
+					<body>
+						<current-time>Loading...</current-time>
+					</body>
+			- Data Binding:
+				{{time}} = time property from the CurrentTime object
+					- every time time changed, the <h1> gets updated
+					- from property -> view
+				- can do view -> property for input
+			- Modules:
+				import {component} from 'angular2/core';
+				- TypeScript compiler should loof for the angular2/core script in the project and import the Component module from it
+					- automatically loaded
+				- Modules are supported by TypeScript and ES6 and can be used with CommonJS, AMD, and other existing module systems
+				- tsconfig.json = where can configure module options for the TypeScript compiler
+				export class CurentTime { ...
+					- export means can be imported as a module in other script files
+		- Part 5 - Create an Ionic 2 App
+			ionic start ionic2-tutorial-github blank --v2
+				--v2 = ionic 2 project
+				- jk, the v1 & v2 flags have been removed
+				- now the default is ionic-angular and the other option is ionic1
+			- Files & Folders:
+				1) src = code (pages and services)
+				2) hooks = scripts that can be executed as part of the Cordova build process
+				3) node_modules = all modules, ionic uses npm to import modules
+					- blank file has 21,890 items for 164.4 MB
+				4) resources = icon & splash images for mobile platforms
+				5) plugins = Cordova plugins
+				6) www = code generated by the build scripts out of the app code
+				7) config.xml = configuration for Cordova when creating app packages
+				8) ionic.config.json = configuration for ionic CLI
+				9) package.json = list of all used npm packages
+				10) tsconfig.json = configuration for the TypeScript compiler
+				11) tslint.json = TSLint checks TypeScript code for errors
+				12) src/pages/home
+					- home.html = template for the home page
+					- home .scss = styles for the home page
+					- home.ts = TypeScript for the home page
+			*** BUILDING THE APP ***
+			1) create a service to get the data from the GitHub API and inject it into the HomePage component
+				- create a services folder in src and add github.ts with the following code;
+					- the ionic CLI can now generate services (providers) with ionic generate
+						ionic generate provider github.ts
+					"
+					import { Injectable } from '@angular/core';
+					import { Http } from '@angular/http';
+					import 'rxjs/add/operator/map';
+
+					@Injectable()
+					export class GitHubProvider {
+					  constructor(private http: Http) {
+					  }
+
+					  getRepos(username) {
+					    let repos = this.http.get('https://api.github.com/users/${username}/repos');
+					    return repos;
+					  }
+					}
+					"
+					- @Injectable decorator lets Angular know the service can be injected into another module and we need Http to call the GitHub API
+					- Http uses RxJS to return Observables
+				- Your app.module.ts should look like this in Ionic 3.X
+					"...
+					import { HttpModule } from '@angular/http';
+					...
+					imports: [
+					  BrowserModule,
+					  HttpModule,
+					  IonicModule.forRoot(MyApp)
+					],
+					"
+				- import the github injectable in src/pages/home/home.ts
+					1) import GitHubProvider:
+						import {GitHubProvider} from '../../providers/github-ts/github-ts';
+					2) create array of injectable providers to the component (only one for now):
+						providers: [GitHubProvider]
+					3) add two public properties to HomePage
+						public foundRepos;
+						public username;
+					4) add github to the constructor:
+						constructor (public github: GitHubProvider){}
+					5) Create getRepos fn
+						"
+						getRepos() {
+						  	this.github.getRepos(this.username).subscribe(
+						  		data => {
+						  			this.foundRepos = data.json();
+						  		},
+						  		err => console.log(err),
+	  							() => console.log('getRepos completed')
+						  	);
+						}"
+						- on an observable use the subscribe method with 3 functions/methods
+							a) handle data
+							b) error
+							c) completed w/o error
+				- Define the HTML template:
+					- a bunch of <ion- UI elements
+					- data binding for bind input to username & invoke getRepos()
+					- *ngFor binding to loop through foundRepos
+
+
+
+===============================================
+===============================================
+08/30/17
+
+Summary:
+	- Researched & Installed Ionic
+Thoughts:
+	- Hopefully we don't have to upgrade the Slack account for more third party, external, incoming webhook, integrations
+	- Not being able to build iOS apps on Ubuntu makes me hate all the sheep for droning into that proprietary, designed for age 3+ bullshit
+	- Installing everything needed to run my first ionic app on an Android Studio emulated phone was ridiculous and beyond difficult
+	- Those last two thoughts somewhat contradict each other
+	- To create a blank template you need internet, and it takes up 213MB with 23,986 items...
+
+
+1) Integrating Slack
+	- Introduction: https://api.slack.com/docs/messages
+	- Incoming Webhooks: https://api.slack.com/incoming-webhooks
+	- Reached Integration Limit: https://ainc.slack.com/apps/new/A0F7XDUAZ-incoming-webhooks
+	- Pricing: https://ainc.slack.com/pricing
+		- Says the free version should give 10 third-party or custom integrations
+2) Ionic
+	- http://ionicframework.com/docs/v1/guide/installation.html
+		- "you must have OS X in order to develop and deploy iPhone apps, so OS X is recommended if possible."
+
+
+Installing Ionic
+	1) Install Oracle JDK 8
+		sudo add-apt-repository ppa:webupd8team/java
+		sudo apt-get update
+		sudo apt-get install oracle-java8-installer
+		sudo apt-get install oracle-java8-set-default
+	2) Install node.js: https://www.godaddy.com/help/install-nodejs-ubuntu-17395
+		sudo apt-get update
+		sudo apt-get install nodejs
+		sudo apt-get install npm
+	3) Install Android Studio and the Android SDK (I doubt I need this for iOS Apps. Actually, IDT I can even make iOS apps with Ubuntu.)
+		- download the exe
+		- run studio.sh from android-studio/bin
+			- https://developer.android.com/studio/install.html
+			- installs Android SDK
+		- Install dependencies: sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+	4) Install Ionic CLI & Related Tools:
+		sudo apt-get install git ruby
+		sudo gem install compass
+		sudo npm install -g cordova ionic grunt-cli bower gulp
+	5) Add the Android SDK to your PATH and set the ANDROID_HOME environment variable correctly. Using ~/.bash_profile for this is the usual approach.
+		nano ~/.bashrc
+		- at the top of the file add the lines:
+			#AndroidSDK Path
+			export ANDROID_HOME=$HOME/Android/Sdk
+			export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+	6) Start using Ionic
+		ionic start todo example
+			- /usr/bin/env: ‘node’: No such file or directory
+				- https://forum.ionicframework.com/t/problems-with-getting-started/11348/2
+				- something about node and nodejs being two different things
+				sudo ln -s "$(which nodejs)" /usr/local/bin/node
+			- ERR: Your Node.js version is v4.2.6. Please update to the latest Node 6 LTS version (or latest Node).
+				- https://stackoverflow.com/questions/10075990/upgrading-node-js-to-latest-version
+				sudo npm install n -g
+				sudo n stable
+			- unable to find starter template for example
+				- scatch this example todo
+		ionic start HelloWorld blank
+		cd example
+		ionic cordova platform add android
+		ionic cordova run android
+			- could not find installed version of gradle
+				sudo add-apt-repository ppa:cwchien/gradle
+				sudo apt-get update
+				sudo apt-get install gradle
+			- You have not accepted the license agreements of the following SDK components:
+				[Android SDK Platform 25].
+				Before building your project, you need to accept the license agreements and complete the installation of the missing components using the Android Studio SDK Manager.
+					- Open Android Studio
+					- configure -> SDK Manager
+					- Check the boc for Android 7.1.1 25 Nougat
+			- NDROID_HOME=/home/bren/Android/Sdk
+				JAVA_HOME=/usr/lib/jvm/java-8-oracle
+				No target specified and no devices found, deploying to emulator
+				Error: No emulator images (avds) found.
+				1. Download desired System Image by running: /home/bren/Android/Sdk/tools/android sdk
+				2. Create an AVD by running: /home/bren/Android/Sdk/tools/android avd
+				HINT: For a faster emulator, use an Intel System Image and install the HAXM device driver
+					- Open Android Studio
+					- Create new project
+					- Select an Adroid Virtual Device
+					- Once project opens...
+					- Tools -> Android -> AVD Manager
+					- Add New Virtual Device
+					Nexus 5X
+					- click download link on Android 8.0 (26)
+			- No target specified and no devices found, deploying to emulator
+				Error: Cannot read property 'replace' of undefined
+				- https://issues.apache.org/jira/browse/CB-12981?jql=text%20~%20%22cannot%20read%20property%20%27%22
+					- created new Virtual Device
+					- Downloaded Android 7.0 (24)
+			- LAUNCH THE AVD FIRST
+
+
+	- I had to install wayyyyy to many dependencies and shit. Hot damn I hope the future of software development doesn't have to be like this
+		- Installing programs to manage packages
+		- Rerouting paths to things in bashrc
+		- Not being able to make iOS apps becuase I don't have a mac
+		- I miss C/make/gcc :'(
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
