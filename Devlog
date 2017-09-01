@@ -17,7 +17,8 @@ Summary:
 	- Created a GitHub Search app
 Thoughts:
 	- There seems to be an unnecessary amount of abstraction for everything
-	- I feel like I am using so many things that are popular but I don't even realize it. (Ionic, Angular 2, TypeScript, JavaScript, JSON, HTML, CSS, SCSS, PHP?, ???)
+	- I feel like I am using so many things that are popular but I don't even realize it.
+		- Ionic, Angular 2, TypeScript, JavaScript (ES7, ES6, ES5), JSON, HTML, CSS, SCSS, Node.js, PHP?, ???)
 
 - Following a Tutorial:
 	- https://scoth.io/tutorials/create-your-first-mobile-app-with-angularjs-and-ionic
