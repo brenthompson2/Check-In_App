@@ -1,4 +1,4 @@
-#Awesome Inc Check-In Mobile Application
+# Awesome Inc Check-In Mobile Application
 
 This is a mobile application developed for Awesome Inc during the fall of 2017 to be used by guests upon entrance to the facility.
 
