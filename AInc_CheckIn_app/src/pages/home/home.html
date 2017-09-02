@@ -1,14 +1,22 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Ionic Blank
+      Welcome to Awesome Inc!
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+	<h1 text-center>Which program are you here for?</h1>
+
+	<ion-card *ngFor="let program of PROGRAMS" (click)="goToProgram(program)">
+		<ion-card-header>
+			{{ program.name }}
+		</ion-card-header>
+		<ion-card-content>
+			{{ program.description }}
+			<img src="{{ program.imageURL }}" alt="{{ program.imageAlt }}">
+		</ion-card-content>
+	</ion-card>
+
 </ion-content>

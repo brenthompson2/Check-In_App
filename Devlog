@@ -4,25 +4,30 @@ Brendan Thompson
 A log of activities as I learned to develop mobile applications using Ionic
 
 Current Status 09/01/17:
-	- Developed a mobile application that takes in a GitHub username and displays all of their repositories
-		- followed this tutorial: https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angular-2
-	- Annoyed with the difficulty I am having to learn as a result of the amount of abstraction
-	- What all am I even using?
-		- Ionic (3?), Angular 2, Node.js,
-		- TypeScript, JavaScript (ES7, ES6, ES5), HTML, CSS, SCSS, JSON, PHP?,
-		- Hybrid Mobile App Development, Reactive Programming, Asynchronous Data,
-	- Going to upgrade the GitHub app by following the tutorial further
-	- Probably able to start on the UI for the AwesomeInc Check-In app
+	- Projects:
+		- Developed a mobile application that gets a GitHub username from the user and displays all of the corresponding repositories. Upon clicking on a repository it brings the user to the appropriate README
+			- followed this tutorial: https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angular-2
+		- Started working on the Awesome Inc Check-In App
+			- It has been a process but it is starting to come along nice and legit-ly
+			- It is still in desperate need of graphic design and Sass work
+	- Ionic:
+		- Annoyed with the difficulty I am having trying to learn as a result of the amount of abstraction
+		- What all am I even using?
+			- Ionic (3?), Angular 2, Node.js,
+			- TypeScript, JavaScript (ES7, ES6, ES5), HTML, CSS, Sass (SCSS), JSON, PHP?,
+			- Hybrid Mobile App Development, Reactive Programming, Asynchronous Data,
 
 
-=========================================
-=========================================
+==================================================================================
+==================================================================================
 
 09/01/17
 
 Summary:
 	- Updated GitHub application to display the README upon clicking a repository
 	- Started working on the Awesome Inc Check-In App
+		- It has been a process but it is starting to come along nice and legit-ly
+		- It is in desperate need of graphic design and Sass work
 Thoughts:
 	- Excited that I can emulate iOS and Android using "ionic serve --lab"
 		- Still gonna need to find out how to port it to an actual iOS device
@@ -116,23 +121,140 @@ Continuing https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angul
 
 - Beginning the AwesomeInc Check-In App
 	ionic start AInc_CheckIn_App blank
+		- create new project called AInc_Ch...
 	ionic cordova platform add android
 	ionic cordova platform add ios
 	ionic serve --lab
+		- run both platforms in a browser
 	ionic cordova run android
+		- run on the android emulator
+	I) Create the Homepage:
+		A) create the HomePage template src/pages/home/home.html:
+			"
+			<ion-header>
+		  	  <ion-navbar>
+			    <ion-title>
+			      Welcome to Awesome Inc!
+			    </ion-title>
+			  </ion-navbar>
+			</ion-header>
 
+			<ion-content padding>
+				<h1 text-center>Which program are you here for?</h1>
 
+				<ion-card *ngFor="let program of PROGRAMS" (click)="goToProgram(program)">
+					<ion-card-header>
+						{{ program.name }}
+					</ion-card-header>
+					<ion-card-content>
+						{{ program.description }}
+						<img src="{{ program.imageURL }}" alt="{{ program.imageAlt }}">
+					</ion-card-content>
+				</ion-card>
+			</ion-content>
+			"
+			- Using Angular *ngFor & JSON {{templates}} to cycle through the list of PROGRAMS
+				- PROGRAMS currently defined in html.ts
+			- Images still not working
+		B) create the HomePage TypeScript Component src/pages/home/home.ts
+			1) include NavController & ProgramPage
+				import { NavController } from 'ionic-angular';
+				import { ProgramPage } from '../programs/program';
+			2) Define PROGRAMS
+				PROGRAMS = [
+					{id: 1, name:'Awesome Inc',
+						description: 'The Main Entrepenuarial Epicenter',
+						imageURL: '../../assets/img/logo.png',
+						imageAlt: 'Awesome Inc Logo'
+					},
+					{id: 2, name:'Awesome Inc University',
+						description: 'The Bootcamps and Classes for both youth and adults',
+						imageURL: '../../assets/img/Awesome Inc U - Logo_header.png',
+						imageAlt: 'Awesome Inc U Logo'
+					},
+					{id: 3, name:'Awesome Inc Fellowship',
+						description: 'The incubator programs for start-ups',
+						imageURL: '../../assets/img/fellowship_logo.png',
+						imageAlt: 'Fellowship Logo'
+					},
+					{id: 4, name:'Awesome Inc Team Alpha',
+						description: 'The Interns that make Awesome Inc possible',
+						imageURL: '../../assets/img/teamalpha.png',
+						imageAlt: 'Team Alpha Logo'
+					}
+				];
+			3) Include the NavController in the constructor:
+				constructor(public navCtrl: NavController) {}
+			4) create the goToProgram() fn
+				goToProgram(program) {
+					this.navCtrl.push(ProgramPage, { currentProgram: program });
+				}
+	II) Create the program page
+		A) New folder src/pages/programs
+		B) Create the program template src/pages/programs/program.html
+		 	"
+		 	<ion-header>
+			  <ion-navbar>
+			    <ion-title>
+			     	{{ this.currentProgram.name }}
+			    </ion-title>
+			  </ion-navbar>
+			</ion-header>
 
+			<ion-content>
+				<div padding>
+					<img src="{{ this.currentProgram.imageURL }}" alt="{{ this.currentProgram.imageAlt }}">
+			     	<p>{{ this.currentProgram.description }}</p>
+				</div>
+			</ion-content>
+			"
+		C) Create the program TypeScript Component src/pages/programs/program.ts
+			"
+				import { Component } from '@angular/core';
+				import { NavController, NavParams } from 'ionic-angular';
 
+				@Component({
+					selector: 'page-program',
+					templateUrl: 'program.html',
+				})
 
+				export class ProgramPage {
+					public currentProgram;
 
+					constructor(private navCtrl: NavController,
+								private navParameters: NavParams) {
 
+						this.currentProgram = this.navParameters.get('currentProgram');
+					}
 
+				}
 
+			"
+			- import NavParams along with NavController
+			- create currentProgram public member
+			- in the constructor set currentProgram to the program passed using NavParams
+	III) Update the Application Information
+		A) Add program page to src/app/app.module.ts
+			1) import the ProgramPage component
+				import { ProgramPage } from '../pages/programs/program';
+			2) add ProgramPage to declarations & entryComponents
+				"
+				declarations: [
+				    MyApp,
+				    HomePage,
+				    ProgramPage
+				],
+				...
+				entryComponents: [
+				    MyApp,
+				    HomePage,
+				    ProgramPage
+				],
+				"
+	IV) Upload pictures to src/assets/img/
 
-
-=========================================
-=========================================
+==================================================================================
+==================================================================================
 
 08/31/17
 
@@ -337,10 +459,8 @@ Thoughts:
 					- data binding for bind input to username & invoke getRepos()
 					- *ngFor binding to loop through foundRepos
 
-
-
-===============================================
-===============================================
+==================================================================================
+==================================================================================
 08/30/17
 
 Summary:
@@ -442,25 +562,3 @@ Installing Ionic
 					- created new Virtual Device
 					- Downloaded Android 7.0 (24)
 			- LAUNCH THE AVD FIRST
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

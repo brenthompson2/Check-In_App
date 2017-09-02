@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+     	{{ this.currentProgram.name }}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+	<div padding>
+		<img src="{{ this.currentProgram.imageURL }}" alt="{{ this.currentProgram.imageAlt }}">
+     	<p>{{ this.currentProgram.description }}</p>
+	</div>
+</ion-content>
