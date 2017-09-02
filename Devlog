@@ -3,8 +3,128 @@ Brendan Thompson
 
 A log of activities as I learned to develop mobile applications using Ionic
 
+Current Status 09/01/17:
+	- Developed a mobile application that takes in a GitHub username and displays all of their repositories
+		- followed this tutorial: https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angular-2
+	- Annoyed with the difficulty I am having to learn as a result of the amount of abstraction
+	- What all am I even using?
+		- Ionic (3?), Angular 2, Node.js,
+		- TypeScript, JavaScript (ES7, ES6, ES5), HTML, CSS, SCSS, JSON, PHP?,
+		- Hybrid Mobile App Development, Reactive Programming, Asynchronous Data,
+	- Going to upgrade the GitHub app by following the tutorial further
+	- Probably able to start on the UI for the AwesomeInc Check-In app
+
+
 =========================================
 =========================================
+
+09/01/17
+
+Summary:
+	-
+Thoughts:
+	- Excited that I can emulate iOS and Android using "ionic serve --lab"
+		- Still gonna need to find out how to port it to an actual iOS device
+	- It is really annoying that I can't use "ionic serve --lab" at my internet-less job because I need "an external network interface"
+		- will be fixed for 3.10.0
+		- https://github.com/ionic-team/ionic-cli/issues/2690
+
+Continuing https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angular-2
+	- Part 6 - Navigating between Pages (this post)
+		1) Prepare home.html & home.ts
+			A) Adding click handler to home.html
+				<ion-card *ngFor="let repo of foundRepos" (click)="goToDetails(repo)">
+			B) import NavController & DetailsPage (even though we haven't made it yet) to home.ts
+				import { NavController } from 'ionic-angular';
+				import {DetailsPage} from '../details/details';
+			C) Inject the NavController into the constructor
+				constructor(private github: GitHubProvider, private nav: NavController) {}
+			D) Create a goToDetails(repo) function
+				goToDetails(repo) {	this.nav.push(DetailsPage, { repo: repo }); }
+			- Overview:
+				- NavController already has home page loaded
+				- upon click of a card, it pushes DetailsPage onto the navigation stack and the framework loads the page / handles the native transition
+				- Won't need to explicitly pop if DetailsPage has an <ion-navbar> because it will automatically add a back button
+		2) Add new GitHubProvider
+			import {Http, Headers} from '@angular/http';
+			getDetails(repo) {
+				let headers = new Headers();
+				headers.append('accept', 'application/vnd.github.VERSION.html');
+				return this.http.get(`${repo.url}/readme`, { headers: headers });
+			}
+			- Overview:
+				- import Headers
+				- gets contents of the repo README
+				- 'accept' specifies that we want it in HTML format
+		3) Create the DetailsPage
+			A) new folder src/pages/details/
+			B) Write details.html:
+				"
+				<ion-header>
+				  <ion-navbar>
+				    <ion-title>
+				     	{{ repo.name }}
+				    </ion-title>
+				  </ion-navbar>
+				</ion-header>
+
+				<ion-content>
+					<div padding [innerHTML]="readme"></div>
+				</ion-content>
+				"
+				- <div padding>{{ readme }}</div> wouldn't work because it would encode the HTML and would display the actual code
+			C) Write details.ts
+				import { NavController, NavParams } from 'ionic-angular';
+				- members:
+					public readme = '';
+					public repo;
+				"
+				constructor(private github: GitHubProvider,
+							private nav: NavController,
+							private navParams: NavParams) {
+
+					this.repo = navParams.get('repo');
+
+					this.github.getDetails(this.repo).subscribe(
+						data => this.readme = data.text(),
+						err => {
+							if (err.status == 404) {
+								this.readme = 'This repo does not have a README';
+							} else {
+								console.error(err);
+							}
+						},
+						() => console.log('getDetails completed')
+					)
+				}"
+				- Overview:
+					- import NavParams
+						- used to get repo sent by HomePage
+					- inject navParams to the constructor:
+		4) Add DetailsPage to app.module.ts
+			"
+			import { DetailsPage } from '../pages/details/details'
+			...
+			declarations: [
+			    MyApp,
+			    HomePage,
+			    DetailsPage
+			  ],
+			  "
+	- That is the end of the tutorial except for some more emulation/testing information
+
+- Beginning the AwesomeInc Check-In App
+	ionic start AInc_CheckIn_App blank
+	ionic cordova platform add android
+	ionic cordova platform add ios
+	ionic serve --lab
+	ionic cordova run android
+
+
+
+
+
+
 
 
 
@@ -226,7 +346,12 @@ Thoughts:
 	- Not being able to build iOS apps on Ubuntu makes me hate all the sheep for droning into that proprietary, designed for age 3+ bullshit
 	- Installing everything needed to run my first ionic app on an Android Studio emulated phone was ridiculous and beyond difficult
 	- Those last two thoughts somewhat contradict each other
-	- To create a blank template you need internet, and it takes up 213MB with 23,986 items...
+	- I had to install wayyyyy to many dependencies and stuff. Hot damn I hope the future of software development doesn't have to be like this
+		- To create a blank template you need internet and it takes up 213MB with 23,986 items...
+		- Installing programs to manage packages
+		- Rerouting paths to things in bashrc
+		- Not being able to make iOS apps becuase I don't have a mac
+		- I miss C/make/gcc :'(
 
 
 1) Integrating Slack
@@ -313,13 +438,6 @@ Installing Ionic
 					- created new Virtual Device
 					- Downloaded Android 7.0 (24)
 			- LAUNCH THE AVD FIRST
-
-
-	- I had to install wayyyyy to many dependencies and shit. Hot damn I hope the future of software development doesn't have to be like this
-		- Installing programs to manage packages
-		- Rerouting paths to things in bashrc
-		- Not being able to make iOS apps becuase I don't have a mac
-		- I miss C/make/gcc :'(
 
 
 
