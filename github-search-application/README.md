@@ -1,26 +1,7 @@
-This is a starter template for [Ionic](http://ionicframework.com/docs/) projects.
+# GitHub Search Application
 
-## How to use this template
+This mobile application was created by following this tutorial from [Gone Hybrid](https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angular-2).
 
-*This template does not work on its own*. The shared files for each starter are found in the [ionic2-app-base repo](https://github.com/ionic-team/ionic2-app-base).
+It asks the user to search for a GitHub username and then displays all of the repositories that they have. Upon clicking on one of the repositories the user is taken to the corresponding README
 
-To use this template, either create a new ionic project using the ionic node.js utility, or copy the files from this repository into the [Starter App Base](https://github.com/ionic-team/ionic2-app-base).
-
-### With the Ionic CLI:
-
-Take the name after `ionic2-starter-`, and that is the name of the template to be used when using the `ionic start` command below:
-
-```bash
-$ sudo npm install -g ionic cordova
-$ ionic start myBlank blank
-```
-
-Then, to run it, cd into `myBlank` and run:
-
-```bash
-$ ionic cordova platform add ios
-$ ionic cordova run ios
-```
-
-Substitute ios for android if not on a Mac.
-
+See Ionic_App_Development/Devlog
