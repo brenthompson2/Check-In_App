@@ -1,0 +1,8 @@
+{
+  "name": "ionic2-github-tutorial",
+  "app_id": "",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}
