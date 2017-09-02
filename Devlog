@@ -21,7 +21,8 @@ Current Status 09/01/17:
 09/01/17
 
 Summary:
-	-
+	- Updated GitHub application to display the README upon clicking a repository
+	- Started working on the Awesome Inc Check-In App
 Thoughts:
 	- Excited that I can emulate iOS and Android using "ionic serve --lab"
 		- Still gonna need to find out how to port it to an actual iOS device
@@ -119,6 +120,8 @@ Continuing https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angul
 	ionic cordova platform add ios
 	ionic serve --lab
 	ionic cordova run android
+
+
 
 
 
