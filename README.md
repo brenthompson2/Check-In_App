@@ -3,6 +3,7 @@
 This is where I am detailing my experience as I attempt to make mobile applications with the Ionic Framework
 
 Current Status 09/03/17:
+
 	- Projects:
 		A) Developed a mobile application that gets a GitHub username from the user and displays all of the corresponding repositories.
 			- Upon clicking on a repository it brings the user to the appropriate README
