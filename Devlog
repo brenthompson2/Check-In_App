@@ -3,19 +3,228 @@ Brendan Thompson
 
 A log of activities as I learned to develop mobile applications using Ionic
 
-Current Status 09/01/17:
-	- Projects:
-		- Developed a mobile application that gets a GitHub username from the user and displays all of the corresponding repositories. Upon clicking on a repository it brings the user to the appropriate README
-			- followed this tutorial: https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angular-2
-		- Started working on the Awesome Inc Check-In App
-			- It has been a process but it is starting to come along nice and legit-ly
-			- It is still in desperate need of graphic design and Sass work
-	- Ionic:
-		- Annoyed with the difficulty I am having trying to learn as a result of the amount of abstraction
-		- What all am I even using?
-			- Ionic (3?), Angular 2, Node.js,
-			- TypeScript, JavaScript (ES7, ES6, ES5), HTML, CSS, Sass (SCSS), JSON, PHP?,
-			- Hybrid Mobile App Development, Reactive Programming, Asynchronous Data,
+Current Status 09/03/17:
+
+	1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship)
+
+	2) [IMPLEMENTED] The app will ask the user if they are expected or not
+
+	3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
+
+	4) The app will ask for information such as name and reason for meeting
+
+	5) The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest
+
+	6) The app will instruct the user to have a seat on one of the couches
+
+	7) [ITS BASIC] The app will look noice (scss, better logos, etc.)
+
+	Ideas:
+		A) taking the user to some information about the company or the program they are interested in as some light reading material while they wait
+		B) implement some sort of idle timer that returns to the home screen after nothing happening for a certain period of time
+			- brings up a timed notification that asks the user if they are still there and returns home if no response
+
+==================================================================================
+==================================================================================
+
+09/03/17
+
+Summary:
+	- Continued working on the Awesome Inc Check-In App
+		- It has been a process but it is starting to come along nice and legit-ly
+		- It is in desperate need of graphic design and Sass work
+		1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship)
+		2) [IMPLEMENTED] The app will ask the user if they are expected or not
+		3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
+	- Got debugging to work on my LGv20 phone
+		- Settings > General > About Phone > Software info > *click on "Build Number" 7 times*
+		- Plugged it in and ran in the computer terminal "ionic cordova run android"
+			- Automatically installed the app onto my phone
+	- Fixed images: img src path is relative to /src/index.html, so assets/img/photo.jpg
+	- Added more Programs, logos, and better descriptions
+	- Researched changing app logo & name but both require internet access
+	- ionic serve --lab -lc
+		- lc adds console output log
+	- Not sure that the FormGroup and FormBuilder are working properly
+Thoughts:
+	- Excited that I can emulate iOS and Android using "ionic serve --lab"
+		- Still gonna need to find out how to port it to an actual iOS device
+	- It is really annoying that I can't use "ionic serve --lab" at my internet-less job because I need "an external network interface"
+		- will be fixed for 3.10.0 - https://github.com/ionic-team/ionic-cli/issues/2690
+
+
+Adding Team Member select to the Awesome Inc Check-In App
+	I) In program.html prompt the user to choose whether or not they are expected
+		<ion-card (click)="isExpected(this.currentProgram)">
+			<ion-card-header>
+				Somebody is expecting me!
+			</ion-card-header>
+		</ion-card>
+		<ion-card (click)="notExpected(this.currentProgram)">
+			<ion-card-header>
+				I am interested in meeting with somebody!
+			</ion-card-header>
+		</ion-card>
+	II) in program.ts create functions to take the user to the appropriate page
+		isExpected(program) { this.navCtrl.push(teamMembers, { currentProgram: program }); }
+		notExpected(program) { this.navCtrl.push(ProgramPage, { currentProgram: program }); }
+	III) Create teamMembers.html as a checkbox of team members
+		<h1 text-center>Please select the team members that are expecting you</h1>
+
+		<ion-card *ngFor="let member of TEAMMEMBERS">
+			<ion-card-header>
+				<ion-item>
+					<ion-label>{{ member.name }}</ion-label>
+					<ion-checkbox color="red" checked="false"></ion-scheckbox>
+				</ion-item>
+			</ion-card-header>
+			<ion-card-content>
+				{{ member.description }}
+				<img src="{{ member.imageURL }}" alt="{{ member.imageAlt }}">
+			</ion-card-content>
+		</ion-card>
+
+		<button ion-button block (click)="submitTeamMembers(this.currentProgram)">Submit</button>
+	IV) Create teamMembers.ts to manage submitting the checkBox
+
+	V) Create a form of checkboxes (see below section following the article by masteringionic.com)
+
+	) import TeamMembersPage in program.ts
+		import { TeamMembersPage } from '../teamMembers/teamMembers';
+	) Add the new pages & providers to src/app/app.module.ts
+		import { TeamMembersPage } from '../pages/teamMembers/teamMembers';
+		import { TeamMembersValidator } from '../providers/teamMemberValidator/teamMemberValidator';
+		@NgModule({
+			declarations: [
+			    MyApp,
+			    HomePage,
+			    ProgramPage,
+			    TeamMembersPage
+			],
+			...
+			bootstrap: [IonicApp],
+			entryComponents: [
+			    MyApp,
+			    HomePage,
+			    ProgramPage,
+			    TeamMembersPage
+			],
+
+Adding a new app icon
+	- add image as icon.png to src/resources/
+	- run: ionic cordova resources
+		- need to log into an Ionic account?
+
+Changing app name
+	- change <name>MyApp</name> to <name>Awesome Check-In</name> in config.xml
+	- remove and re-add android platform so as to overwrite the AndroidManifest.xml
+		ionic cordova platform rm android
+		ionic cordova platform add android
+	- didn't do because no internet
+
+Creating a form of checkboxes:
+	- masteringionic.com/blog/2017-01-28-validating-multiple-checkboxes-with-ionic
+	1) Create a a teamMemberValidator provider src/providers/teamMemberValidator/teamMemberValidator.ts
+		"
+		import { Injectable } from '@angular/core';
+		import { FormControl } from '@angular/forms';
+		import { HttpModule } from '@angular/http';
+		import 'rxjs/add/operator/map';
+
+		/*
+		  Provider for validating the checkboxes in the teamMembersPage
+		*/
+
+		@Injectable()
+		export class TeamMemberValidator {
+
+			constructor(private http: HttpModule) {
+			}
+
+			validateCheckboxes(boxes: FormControl){
+				var valid 	: boolean = false,
+					k		: any;
+
+				for (k in boxes.value){
+					var val = boxes.value[k];
+
+					if (val) {
+						valid = true;
+						break;
+					}
+				}
+
+				if (valid) {
+					return null;
+				}
+
+				return {
+					checkboxRequired: true
+				};
+			}
+		}
+		"
+		- validateCheckboxes method
+		- FormControl is injected as a dependency allowing the method to receive an abstract representation of the form input field that the FormControl is mapped to.
+		- loops through all of the FormControls and returns null to signal if the validation successfully passed
+		- validation fails if function returns checkboxRequired w/ a value of true
+		- I don't think it uses the HttpModule import
+	2) Update teamMembers.ts
+		A) new imports
+			import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+			import { TeamMemberValidator } from '../../providers/teamMemberValidator/teamMemberValidator';
+		B) more member variables
+			public form : FormGroup;
+		C) more constructor parameters
+			private cbForm: FormBuilder,
+			private cbvalidator: TeamMemberValidator
+		D) create a FormBuilder object in the constructor
+			this.form = cbForm.group({
+				'teamMembers': cbForm.group({
+					1	: [false],
+					2	: [false],
+					3	: [false],
+					4	: [false],
+					5	: [false],
+					6	: [false]
+				}, { validator: cbvalidator.validateCheckboxes })
+			});
+			- FormGroup assigned an index titled service of FormControl objects
+			- initial default values of false for each FormControl
+			- supply the validateCheckboxes method from our cbValidator service
+		E) Create the validation outputter
+			outputValidator(val){
+				console.log('Validating Form');
+				console.dir(val);
+			}
+	3) Create the UI
+		<form [formGroup]="form" (ngSubmit)="outputValidator(form.value)">
+			-
+		<ion-item-group formGroupName="teamMembers">
+			- collect and organize checkboxes
+		<ion-checkbox color="danger" formControlName="{{ member.id }}"></ion-checkbox>
+			- checkboxes have formConrolName attributes
+		<button [disabled]="!form.valid"></button>
+	4) Add providers to app.module.ts:
+		import { HttpModule } from '@angular/http';
+		import { TeamMemberValidator } from '../providers/teamMemberValidator/teamMemberValidator';
+		...
+		imports: [
+			...
+    		HttpModule,
+    		...
+    	...
+    	providers: [
+    		TeamMemberValidator
+    	...
+    	- I don't think I am even using the HttpModule stuff
+
+
+
+
+
+
+
 
 
 ==================================================================================
@@ -28,6 +237,10 @@ Summary:
 	- Started working on the Awesome Inc Check-In App
 		- It has been a process but it is starting to come along nice and legit-ly
 		- It is in desperate need of graphic design and Sass work
+		1) [COMPLETE] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship)
+		2) The app will ask the user for some basic information: name, if they are expected, who they are here to see, reason, etc.
+		3) The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest and instruct the user to have a seat on one of the couches
+		4) Bonus: Just got the idea of then taking the user to some information about the company or the program they are interested in as some light reading material while they wait
 Thoughts:
 	- Excited that I can emulate iOS and Android using "ionic serve --lab"
 		- Still gonna need to find out how to port it to an actual iOS device
@@ -115,11 +328,23 @@ Continuing https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angul
 			    MyApp,
 			    HomePage,
 			    DetailsPage
-			  ],
-			  "
+			],
+			...
+			bootstrap: [IonicApp],
+			entryComponents: [
+			    MyApp,
+			    HomePage,
+			    DetailsPage
+			]
+			"
 	- That is the end of the tutorial except for some more emulation/testing information
 
 - Beginning the AwesomeInc Check-In App
+	- As part of my AwesomeInc Internship they have asked me to develop a mobile app to keep running on an iPad by the entrance for guests to use to check in.
+		1) The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship)
+		2) The app will ask the user for some basic information: name, if they are expected, who they are here to see, reason, etc.
+		3) The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest and instruct the user to have a seat on one of the couches
+		4) Bonus: Just got the idea of then taking the user to some information about the company or the program they are interested in as some light reading material while they wait
 	ionic start AInc_CheckIn_App blank
 		- create new project called AInc_Ch...
 	ionic cordova platform add android
@@ -245,6 +470,7 @@ Continuing https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angul
 				    ProgramPage
 				],
 				...
+				bootstrap: [IonicApp],
 				entryComponents: [
 				    MyApp,
 				    HomePage,
@@ -261,7 +487,7 @@ Continuing https://gonehybrid.com/build-your-first-mobile-app-with-ionic-2-angul
 Summary:
 	- Created a GitHub Search app
 Thoughts:
-	- There seems to be an unnecessary amount of abstraction for everything
+	- Annoyed with the difficulty I am having trying to learn as a result of the amount of abstraction and amount of different yet powerful tools all working together
 	- I feel like I am using so many things that are popular but I don't even realize it.
 		- Ionic, Angular 2, TypeScript, JavaScript (ES7, ES6, ES5), JSON, HTML, CSS, SCSS, Node.js, PHP?, ???)
 

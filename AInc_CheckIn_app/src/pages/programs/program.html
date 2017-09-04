@@ -11,4 +11,17 @@
 		<img src="{{ this.currentProgram.imageURL }}" alt="{{ this.currentProgram.imageAlt }}">
      	<p>{{ this.currentProgram.description }}</p>
 	</div>
+
+	<ion-card (click)="isExpected(this.currentProgram)">
+		<ion-card-header>
+			Somebody is expecting me!
+		</ion-card-header>
+	</ion-card>
+
+	<ion-card (click)="notExpected(this.currentProgram)">
+		<ion-card-header>
+			I am interested in meeting with somebody!
+		</ion-card-header>
+	</ion-card>
+
 </ion-content>
