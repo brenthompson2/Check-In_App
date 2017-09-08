@@ -14,7 +14,7 @@ Current Status 09/03/17:
 			- It is still in desperate need of some graphic design and Sass work
 	- Ionic:
 		- Took some time to get used to a reactive programming paradigm as opposed to the object-oriented/sequential programming styles I was used to
-		- Was overwhelmed with the amount of powerful tools I was using until I wrote out the description below
+		- Was overwhelmed with the amount of powerful tools I was using until I wrote out the explanations below
 
 ### Ionic:
 

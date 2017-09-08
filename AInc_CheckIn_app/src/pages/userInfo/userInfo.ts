@@ -1,20 +1,21 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { ProgramPage } from '../programs/program';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Http } from '@angular/http';
+/*import { SlackMessaging } from '../../providers/slackIntegration/slackMessaging';*/
 
-
-import { BoxCheckedValidator } from '../../providers/checkBoxValidators/boxCheckedValidator';
-
-import { UserInfoPage } from '../userInfo/userInfo';
 
 @Component({
-	selector: 'page-teamMembers',
-	templateUrl: 'teamMembers.html',
+	selector: 'page-userInfo',
+	templateUrl: 'userInfo.html',
 })
 
-export class TeamMembersPage {
+export class UserInfoPage {
 	public currentProgram;
-	public currentMemberFormGroup : FormGroup;
+	public currentMemberFormGroup: FormGroup;
+	public currentUserInfoFormGroup : FormGroup;
+	private ourHttp: Http;
 	public TEAMMEMBERS = [
 		{id: 1, name:'Emily Wehrle',
 			description: 'Director of Operations',
@@ -56,30 +57,37 @@ export class TeamMembersPage {
 
 	constructor(private navCtrl : NavController,
 				private navParameters : NavParams,
-				private memberFormBuilder : FormBuilder,
-				private memberValidator : BoxCheckedValidator) {
+				private userInfoFormBuilder : FormBuilder,
+				private http: Http) {
 
 		this.currentProgram = this.navParameters.get('currentProgram');
+		this.currentMemberFormGroup = this.navParameters.get('memberFormGroup');
 
-		this.currentMemberFormGroup = this.memberFormBuilder.group ({
-			'teamMembers': this.memberFormBuilder.group({
-				1	: [false],
-				2	: [false],
-				3	: [false],
-				4	: [false],
-				5	: [false],
-				6	: [false]
-			}, { validator: this.memberValidator.validateABoxChecked })
+		this.ourHttp = http;
+
+		this.currentUserInfoFormGroup = this.userInfoFormBuilder.group ({
+			name : ['', Validators.required],
+			email : ['', Validators.minLength(8)],
+			reason : ['']
 		});
 	}
 
-	submitTeamMembers(formGroup) {
-		this.navCtrl.push(UserInfoPage, { currentProgram: this.currentProgram,
-										memberFormGroup: formGroup });
+	sendSlackMessage() {
+		var url = "https://hooks.slack.com/services/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";
+		var messageText =
+			{
+				"text": "Testing Message from Check-In App"
+			}
+
+		return this.ourHttp.post(url, messageText)
+			.subscribe();
+
+		/*submitUserInfo();*/
 	}
 
-	outputValidator(val){
-		console.log('Validating Form');
-		console.dir(val);
+	submitUserInfo() {
+		this.navCtrl.push(ProgramPage, { currentProgram: this.currentProgram,
+										memberFormGroup: this.currentMemberFormGroup,
+										userInfoFormGroup: this.currentUserInfoFormGroup });
 	}
 }

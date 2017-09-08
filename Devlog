@@ -11,9 +11,9 @@ Current Status 09/03/17:
 
 	3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
 
-	4) The app will ask for information such as name and reason for meeting
+	4) [IN PROGRESS] The app will ask for information such as name and reason for meeting
 
-	5) The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest
+	5) [IN PROGRESS] The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest
 
 	6) The app will instruct the user to have a seat on one of the couches
 
@@ -23,6 +23,334 @@ Current Status 09/03/17:
 		A) taking the user to some information about the company or the program they are interested in as some light reading material while they wait
 		B) implement some sort of idle timer that returns to the home screen after nothing happening for a certain period of time
 			- brings up a timed notification that asks the user if they are still there and returns home if no response
+
+
+
+==================================================================================
+==================================================================================
+
+09/06/17
+
+Summary:
+	- Continued working on the Awesome Inc Check-In App
+		- It has been a process but it is starting to come along nice and legit-ly
+		- It is in desperate need of graphic design and Sass work
+		1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship, etc.)
+		2) [IMPLEMENTED] The app will ask the user if they are expected or not
+		3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
+		4) The app will ask for information such as name and reason for meeting
+Thoughts:
+	-
+
+Integrating Slack
+	- Manage -> Custom Integrations -> Create Custom WebHook
+	- Add Configuration
+		- Post to Channel -> #bot-test
+		- Webhook URL = https://hooks.slack.com/services/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
+		- Sending Messages:
+			Option 1 = Send a JSON string as the payload parameter in a POST request
+			Option 2 = Send a JSON string as the body of a POST request
+		- Customized Appearance:
+			- can customize in the Integration Settings section
+			- or send: "username": "new-bot-name", "icon_url": "https://slack.com/img/icons/app-57.png", "icon_emoji": ":ghost"
+		- Channel Override:
+			- "channel": "#other-channel"
+			- "channel": "@username"
+		- Changed Name to Check-In_Bot
+		- Changed Icon to red exclamation point
+	- I've tried 100 and a half tutorials and they all say very different things
+
+New Project: Integrating Slack
+	ionic start integratingSlack blank
+		- gave me the option to create a new app on their website
+	ionic cordova add android
+	ionc serve --lab
+		- its beautiful
+	<plug in phone>
+	ionic cordova run android
+		- giving that error I couldn't fix
+		- ANDROID_HOME=/home/bren/Android/Sdk
+			JAVA_HOME=/usr/lib/jvm/java-8-oracle
+			No target specified and no devices found, deploying to emulator
+
+			Error: Cannot read property 'replace' of undefined
+
+			[ERROR] An error occurred while running cordova run android (exit code 1).
+	<unplugged phone>
+	ionic cordova run android
+		- its beautiful
+	<plug in phone>
+	ionic cordova run android
+		- its beautiful
+
+Implementing the integration of slack
+	1) home.html
+		- Create a button that calls the sendMessages function which we will soon be implementing:
+		"
+		<ion-content padding>
+  			Click This Button to send a message on Slack!
+  			<button ion-button block (click)="sendMessage()">Send Message</button>
+		</ion-content>
+		"
+	2) home.ts
+		https://www.youtube.com/watch?v=YR2abVE5ZyQ
+			- import http:
+				import { Http, Headers } from '@angular/http';
+			- Create the first version of our sendMessages function
+			"
+				sendMessage() {
+					const messageToSend = "Test Message from Check-In App";
+
+					const headers = new Headers();
+					headers.append('Constant-Type',
+						'application/json; charset=utf-8');
+
+					this.http.post('https://hooks.slack.com/services/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', JSON.stringify(messageToSend), headers)
+						.subscribe(
+							() => {},
+							err =>	console.error(err)
+						);
+				}
+			"
+			1) Create the messageToSend
+			2) Create the headers
+				- tells the post what format the header is gonna be like
+
+
+
+
+
+==================================================================================
+==================================================================================
+
+09/03/17
+
+Summary:
+	- Continued working on the Awesome Inc Check-In App
+		- It has been a process but it is starting to come along nice and legit-ly
+		- It is in desperate need of graphic design and Sass work
+		1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship, etc.)
+		2) [IMPLEMENTED] The app will ask the user if they are expected or not
+		3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
+		4) The app will ask for information such as name and reason for meeting
+Thoughts:
+	-
+
+Creating The Team Members Form
+	1) src/app/app.module.ts:
+		A) Import Pages & Modules
+			import { TeamMembersPage } from '../pages/teamMembers/teamMembers';
+			import { UserInfoPage } from '../pages/userInfo/userInfo';
+
+			import { HttpModule } from '@angular/http';
+			import { FormsModule } from '@angular/forms';
+			import { BoxCheckedValidator } from '../providers/checkBoxValidators/boxCheckedValidator';
+			- I have not yet used the HttpModule in any page
+		B) @NgModule({
+  				declarations:
+  					[MyApp, HomePage, ProgramPage, TeamMembersPage, UserInfoPage],
+
+  				imports:
+  					[BrowserModule, HttpModule, FormsModule, IonicModule.forRoot(MyApp)],
+
+  				bootstrap:
+  					[IonicApp],
+
+  				entryComponents:
+  					[MyApp, HomePage, ProgramPage, TeamMembersPage, UserInfoPage],
+
+  				providers:
+  					[StatusBar, SplashScreen, {provide: ErrorHandler, useClass: IonicErrorHandler}, BoxCheckedValidator]
+		})
+	2) src/pages/teamMembers/teamMembers.ts:
+		A) Imports
+			import { NavController, NavParams } from 'ionic-angular';
+			import { FormBuilder, FormGroup } from '@angular/forms';
+			import { BoxCheckedValidator } from '../../providers/checkBoxValidators/boxCheckedValidator';
+			import { UserInfoPage } from '../userInfo/userInfo';
+		B) Member Variables
+			public currentProgram;
+			public currentMemberFormGroup : FormGroup;
+			public TEAMMEMBERS = [
+				{id: 1, name:'Emily Wehrle',
+					description: 'Director of Operations',
+					team: 'main',
+					imageURL: 'assets/img/TeamMembers/emilywehrle_wall.gif',
+					imageAlt: 'Emily Wehrle'
+				},
+				{id: 2, name:'Brian Raney',
+					description: 'Co-Founder',
+					team: 'main',
+					imageURL: 'assets/img/TeamMembers/brianraney_wall.gif',
+					imageAlt: 'Brian Raney'
+				},
+				{id: 3, name:'Amanda Murray',
+					description: 'Director of Marketing',
+					team: 'Marketing',
+					imageURL: 'assets/img/TeamMembers/teamMember.png',
+					imageAlt: 'Amanda Murray'
+				},
+				{id: 4, name:'Keith McMunn',
+					description: 'Director of Fellowship',
+					team: 'Fellowship',
+					imageURL: 'assets/img/TeamMembers/teamMember.png',
+					imageAlt: 'Keith McMunn'
+				},
+				{id: 5, name:'Nick Such',
+					description: 'Co-Founder',
+					team: 'main',
+					imageURL: 'assets/img/TeamMembers/nicksuch_wall.gif',
+					imageAlt: 'Nick Such'
+				},
+				{id: 6, name:'Kyle Raney',
+					description: 'Development Team',
+					team: 'Team Alpha',
+					imageURL: 'assets/img/TeamMembers/kyleraney_wall.gif',
+					imageAlt: 'Kyle Raney'
+				}
+			];
+		C)  constructor(private navCtrl : NavController,
+						private navParameters : NavParams,
+						private memberFormBuilder : FormBuilder,
+						private memberValidator : BoxCheckedValidator) {
+
+				this.currentProgram = this.navParameters.get('currentProgram');
+
+				this.currentMemberFormGroup = this.memberFormBuilder.group ({
+					teamMembers: this.memberFormBuilder.group({
+						1	: [false],
+						2	: [false],
+						3	: [false],
+						4	: [false],
+						5	: [false],
+						6	: [false]
+					}, { validator: this.memberValidator.validateABoxChecked })
+				});
+			}
+		D)  submitTeamMembers() {
+				this.navCtrl.push(UserInfoPage, { currentProgram: this.currentProgram,
+												memberFormGroup: this.currentMemberFormGroup });
+			}
+	3) Create the form interface
+		<form [formGroup]="currentMemberFormGroup" (ngSubmit)="outputValidator(currentMemberFormGroup.value)">
+			<ion-item-group formGroupName="teamMembers">
+				<ion-card *ngFor="let member of TEAMMEMBERS">
+					<ion-card-header>
+						<ion-item>
+							<ion-label>{{ member.name }}</ion-label>
+							<ion-checkbox color="red" formControlName="{{ member.id }}"></ion-checkbox>
+						</ion-item>
+					</ion-card-header>
+					<ion-card-content>
+						{{ member.description }}
+						<img src="{{ member.imageURL }}" alt="{{ member.imageAlt }}">
+					</ion-card-content>
+				</ion-card>
+			</ion-item-group>
+
+			<button ion-button block [disabled]="!currentMemberFormGroup.valid" (click)="submitTeamMembers()">Submit</button>
+		</form>
+	4) Create the BoxCheckedValidator to ensure that one of the members was selected
+		A) Imports
+			import { Injectable } from '@angular/core';
+			import { FormControl } from '@angular/forms';
+		B)
+			validateABoxChecked(boxes: FormControl){
+				var isValid 	: boolean = false,
+					index		: any;
+
+				for (index in boxes.value){
+					var val = boxes.value[index];
+
+					if (val) {
+						isValid = true;
+						break;
+					}
+				}
+
+				if (isValid) {
+					return null;
+				}
+
+				return {
+					checkboxRequired: true
+				};
+			}
+
+
+Read from The Team Members Form
+	?
+
+Send Email w/ Ionic Email Composer
+	- Opens in native mail client and you have to click send
+	- https://www.coursera.org/learn/ionic-cordova/lecture/VM86w/excercise-video-sending-email
+	1) Download open source email composer plugin
+		ionic cordova plugin add cordova-plugin-email
+		npm install --save @ionic-native/email-composer
+	2) Add to app.module.ts
+		import { EmailComposer } from '@ionic-native/email-composer'
+		providers: ..., EmailComposer],
+	3) Setup userInfo.ts
+		import { EmailComposer } from @ionic-native/email-composer';
+		...
+		constructor (..., private emailComposer: EmailComposer)
+		...
+		}
+		...
+		sendEmail() {
+			let email = {
+				to: 'brenthompson2@gmail.com',
+				subject: '{{ this.currentUserInfoFormGroup.name }} is here to see you!',
+				body: '{{ this.currentUserInfoFormGroup.name }} is here to see you. They gave the reason {{ this.currentUserInfoFormGroup.reason }} is here to see you',
+				isHtml: true
+			}
+
+			this.emailComposer.open(email);
+		}
+	4) <button ion-button block (click)="sendEmail()">Send Email</button> in DOM (userInfo.html)
+
+Using Rackspace's Mailgun
+	https://www.mailgun.com
+		- GitHub, lyft, shopify, **slack**, stripe
+	https://www.thepolyglotdeveloper.com/2016/05/send-emails-ionic-2-mobile-app-via-rackspace-mailgun-api/
+	1) Create an account
+		- free = 10,000 emails per month
+	2) in userInfo.ts:
+		A) import { Http, Request, RequestMethod } from '@angular/http'
+		B) Members:
+			http: Http;
+			mailgunUrl: string;
+			mailgunApiKey: string;
+		C) constructor(http: Http){
+			this.http = http;
+			this.mailgunUrl = "MAILGUN_URL";
+			this.mailgunApiKey = window.btoa("api:key-MAILGUN_API_KEY")
+		}
+			- btoa creates a base64 encoded string
+		D) Send Function:
+			send(recipient: string, subject: string, message: string) {
+				var requestHeaders = new Headers();
+				requestHeaders.append("Authorization", "Basic " + this.mailgunApiKey);
+				requestHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+				this.http.request(new Request({
+					method: RequestMethod.Post,
+					url: "https://api.mailgun.net/v3/" + this.mailgunURL + "/messages",
+					body: "from=brenthompson2@awesomeinc.org&to=" + recipient + "&subject=" + subject + "&text=" + message,
+					headers: requestHeaders
+				}))
+				.subscribe(success => {
+					console.log("SUCCESS -> " + JSON.stringify(success));
+				}, error => {
+					console.log("ERROR -> " + JSON.stringify(error));
+				});
+			}
+		E) UI
+			<button (click)="send(recipient, subject, message)">
+
+
+
+
+
 
 ==================================================================================
 ==================================================================================

@@ -8,20 +8,26 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { ProgramPage } from '../pages/programs/program';
 import { TeamMembersPage } from '../pages/teamMembers/teamMembers';
+import { UserInfoPage } from '../pages/userInfo/userInfo';
 
 import { HttpModule } from '@angular/http';
-import { TeamMemberValidator } from '../providers/teamMemberValidator/teamMemberValidator';
+import { FormsModule } from '@angular/forms';
+import { BoxCheckedValidator } from '../providers/checkBoxValidators/boxCheckedValidator';
+import { SlackMessaging } from '../providers/slackIntegration/slackMessaging';
+import { EmailComposer } from '@ionic-native/email-composer';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
     ProgramPage,
-    TeamMembersPage
+    TeamMembersPage,
+    UserInfoPage
   ],
   imports: [
     BrowserModule,
     HttpModule,
+    FormsModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
@@ -29,13 +35,16 @@ import { TeamMemberValidator } from '../providers/teamMemberValidator/teamMember
     MyApp,
     HomePage,
     ProgramPage,
-    TeamMembersPage
+    TeamMembersPage,
+    UserInfoPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    TeamMemberValidator
+    BoxCheckedValidator,
+    SlackMessaging,
+    EmailComposer
   ]
 })
 export class AppModule {}
