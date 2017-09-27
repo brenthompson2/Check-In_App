@@ -7,24 +7,83 @@ Current Status 09/03/17:
 
 	1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship)
 
-	2) [IMPLEMENTED] The app will ask the user if they are expected or not
+	2) [REMOVED] The app will ask the user if they are expected or not
 
-	3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
+	3) [IMPLEMENTED] If expected, they will be asked to select the team members that are expecting them
 
-	4) [IN PROGRESS] The app will ask for information such as name and reason for meeting
+	4) [IMPLEMENTED] The app will ask for information such as name and reason for meeting
 
-	5) [IN PROGRESS] The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest
+	5) [Prepared] The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest
 
-	6) The app will instruct the user to have a seat on one of the couches
+	6) [IMPLEMENTED] The app will instruct the user to have a seat on one of the couches
 
-	7) [ITS BASIC] The app will look noice (scss, better logos, etc.)
+	7) [MEH] The app will look noice (scss, better logos, etc.)
 
 	Ideas:
 		A) taking the user to some information about the company or the program they are interested in as some light reading material while they wait
 		B) implement some sort of idle timer that returns to the home screen after nothing happening for a certain period of time
 			- brings up a timed notification that asks the user if they are still there and returns home if no response
+		C) Link with productivity statistic software they use
 
 
+==================================================================================
+==================================================================================
+
+09/10/17
+
+Summary:
+	- Continued working on the Awesome Inc Check-In App
+		- It has been a process but it is starting to come along nice and legit-ly
+		- It is in desperate need of graphic design and Sass work
+		1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship)
+		2) [IMPLEMENTED] The app will ask the user if they are expected or not
+		3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
+		4) [IN PROGRESS] The app will ask for information such as name and reason for meeting
+		5) [IN PROGRESS] The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest
+Thoughts:
+	-
+
+Slack API Text Formatting
+	- *bold*
+	- _italics_
+	- This will create\nA two line comment
+	- `Code Block`
+	- ```If the code is elaborate or contains\nnewline characters
+	- There is a slack app to use message buttons
+
+Creating the custom JSON payload for posts to slack
+	- chose the icon online in the incoming webhooks management area
+	sendSlackMessage() {
+		var currentTime = (new Date).getTime() / 1000;
+		var formName = this.currentUserInfoFormGroup.get('name').value;
+		var formEmail = this.currentUserInfoFormGroup.get('email').value;
+		var formReason = this.currentUserInfoFormGroup.get('reason').value;
+
+		var url = "https://hooks.slack.com/services/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";
+		var messageText = JSON.stringify({
+			"username": "Check-In_Bot",
+			"text": "A guest has arrived for you!",
+			"attachments": [
+				{
+					"title": formName + " just checked in!",
+					"text": "Reason: " + formReason,
+					"author_name": formEmail,
+					"color": "danger",
+					"footer": "Check-In App",
+					"ts": currentTime
+				}
+			]
+		})
+
+		return this.ourHttp.post(url, messageText)
+			.subscribe();
+	}
+
+Added new Home Page
+
+Added Confirm page
+
+Accessed Form Data
 
 ==================================================================================
 ==================================================================================
@@ -35,12 +94,13 @@ Summary:
 	- Continued working on the Awesome Inc Check-In App
 		- It has been a process but it is starting to come along nice and legit-ly
 		- It is in desperate need of graphic design and Sass work
-		1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship, etc.)
+		1) [IMPLEMENTED] The app will ask the user which program they are here for (AwesomeInc, University, Team Alpha, Fellowship)
 		2) [IMPLEMENTED] The app will ask the user if they are expected or not
 		3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
-		4) The app will ask for information such as name and reason for meeting
+		4) [IN PROGRESS] The app will ask for information such as name and reason for meeting
+		5) [IN PROGRESS] The app will send a notification to the corresponding Awesome Inc team member regarding the arrival of the guest
 Thoughts:
-	-
+	- There was a million different versions of http post syntax on the internet and it took way to long to get one to work.
 
 Integrating Slack
 	- Manage -> Custom Integrations -> Create Custom WebHook
@@ -84,38 +144,7 @@ New Project: Integrating Slack
 		- its beautiful
 
 Implementing the integration of slack
-	1) home.html
-		- Create a button that calls the sendMessages function which we will soon be implementing:
-		"
-		<ion-content padding>
-  			Click This Button to send a message on Slack!
-  			<button ion-button block (click)="sendMessage()">Send Message</button>
-		</ion-content>
-		"
-	2) home.ts
-		https://www.youtube.com/watch?v=YR2abVE5ZyQ
-			- import http:
-				import { Http, Headers } from '@angular/http';
-			- Create the first version of our sendMessages function
-			"
-				sendMessage() {
-					const messageToSend = "Test Message from Check-In App";
-
-					const headers = new Headers();
-					headers.append('Constant-Type',
-						'application/json; charset=utf-8');
-
-					this.http.post('https://hooks.slack.com/services/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', JSON.stringify(messageToSend), headers)
-						.subscribe(
-							() => {},
-							err =>	console.error(err)
-						);
-				}
-			"
-			1) Create the messageToSend
-			2) Create the headers
-				- tells the post what format the header is gonna be like
-
+	https://brenthompson2.github.io/Integrating-Slack
 
 
 
@@ -134,7 +163,6 @@ Summary:
 		3) [IN PROGRESS] If expected, they will be asked to select the team members that are expecting them
 		4) The app will ask for information such as name and reason for meeting
 Thoughts:
-	-
 
 Creating The Team Members Form
 	1) src/app/app.module.ts:

@@ -1,22 +1,52 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Welcome to Awesome Inc!
+      <img id="headerImage" src="assets/img/AInc_logo.png" alt="Awesome Inc">
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-	<h1 text-center>Which program are you here for?</h1>
+	<h1>What brought you in today?</h1>
 
-	<ion-card *ngFor="let program of PROGRAMS" (click)="goToProgram(program)">
-		<ion-card-header>
-			{{ program.name }}
-		</ion-card-header>
-		<ion-card-content>
-			{{ program.description }}
-			<img src="{{ program.imageURL }}" alt="{{ program.imageAlt }}">
-		</ion-card-content>
-	</ion-card>
+	<ion-grid>
+		<ion-row>
+			<ion-col col-12 col-sm>
+				<ion-card (click)="clickedEnt()">
+					<ion-card-header>
+						Entrepreneurship
+					</ion-card-header>
+					<ion-card-content>
+						<img src="assets/img/Icon_For-Entrepreneurs.png" alt="Entrepreneurs">
+						<p>Find out what you can get involved in around Awesome Inc and our entrepreneurial community</p>
+					</ion-card-content>
+				</ion-card>
+			</ion-col>
+
+			<ion-col col-12 col-sm>
+				<ion-card (click)="clickedCode()">
+					<ion-card-header>
+						Learning To Code
+					</ion-card-header>
+					<ion-card-content>
+						<img src="assets/img/Icon_LTC.png" alt="Learn to Code">
+						<p>Everybody can and should learn to code, start today</p>
+					</ion-card-content>
+				</ion-card>
+			</ion-col>
+
+			<ion-col col-12 col-sm>
+				<ion-card (click)="clickedSpace()">
+					<ion-card-header>
+						The Workspace
+					</ion-card-header>
+					<ion-card-content>
+						<img src="assets/img/Icon_Coworking.png" alt="Coworking Space">
+						<p>Rent a desk or space for events, meetings, and more</p>
+					</ion-card-content>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
 
 </ion-content>

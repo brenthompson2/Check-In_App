@@ -6,28 +6,19 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content>
-	<div padding>
+<ion-content padding>
+	<div>
 		<img src="{{ this.currentProgram.imageURL }}" alt="{{ this.currentProgram.imageAlt }}">
      	<p>{{ this.currentProgram.description }}</p>
 	</div>
 
-	<h1 text-center>You've submitted the following members:</h1>
-
-	<!-- DOESN'T ACTUALLY READ THE FORM YET -->
-	<ion-card *ngFor="let member of TEAMMEMBERS">
-		<ion-card-header>
-			{{ member.name }}
-		</ion-card-header>
-	</ion-card>
-
 	<h1 text-center>We Just Need a Little More Info!</h1>
 
-	<form [formGroup]="currentUserInfoFormGroup">
+	<form [formGroup]="currentUserInfoFormGroup" novalidate (ngSubmit)="submitUserInfo()">
 		<ion-list>
 			<ion-item>
 				<ion-label fixed>Name:</ion-label>
-				<ion-input type="text" value="" formControlName="name"></ion-input>
+				<ion-input type="text" formControlName="name"></ion-input>
 			</ion-item>
 
 			<ion-item>
@@ -40,29 +31,14 @@
 				<ion-textarea maxLength="300" formControlName="reason"></ion-textarea>
 			</ion-item>
 
-			<!-- <button ion-button block>Submit</button> -->
+			<!-- <p>Name: {{ currentUserInfoFormGroup.get('name').value | json }}</p>
+
+			<p>Email: {{ currentUserInfoFormGroup.get('email').value | json }}</p>
+
+			<p>Reason: {{ currentUserInfoFormGroup.get('reason').value | json }}</p> -->
+
+			<button ion-button block type="submit">Submit</button>
 		</ion-list>
 	</form>
-
-	<button ion-button block (click)="sendSlackMessage()">Send Notification</button>
-
-	<!-- <form [formGroup]="cbFormGroup" (ngSubmit)="outputValidator(checkFormGroup.value)">
-		<ion-item-group formGroupName="teamMembers">
-			<ion-card *ngFor="let member of TEAMMEMBERS">
-				<ion-card-header>
-					<ion-item>
-						<ion-label>{{ member.name }}</ion-label>
-						<ion-checkbox color="red" formControlName="{{ member.id }}"></ion-checkbox>
-					</ion-item>
-				</ion-card-header>
-				<ion-card-content>
-					{{ member.description }}
-					<img src="{{ member.imageURL }}" alt="{{ member.imageAlt }}">
-				</ion-card-content>
-			</ion-card>
-		</ion-item-group>
-
-		<button ion-button block [disabled]="!cbFormGroup.isValid" (click)="submitTeamMembers()">Submit</button>
-	</form> -->
 
 </ion-content>

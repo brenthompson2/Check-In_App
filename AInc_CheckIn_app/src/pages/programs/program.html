@@ -1,27 +1,28 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-     	{{ this.currentProgram.name }}
+     	Welcome Entrepreneur!
     </ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content>
-	<div padding>
-		<img src="{{ this.currentProgram.imageURL }}" alt="{{ this.currentProgram.imageAlt }}">
-     	<p>{{ this.currentProgram.description }}</p>
-	</div>
+<ion-content padding>
+	<h1>Which program are you interested in?</h1>
 
-	<ion-card (click)="isExpected(this.currentProgram)">
-		<ion-card-header>
-			Somebody is expecting me!
-		</ion-card-header>
-	</ion-card>
-
-	<ion-card (click)="notExpected(this.currentProgram)">
-		<ion-card-header>
-			I am interested in meeting with somebody!
-		</ion-card-header>
-	</ion-card>
+	<ion-grid>
+		<ion-row>
+			<ion-col col-12 col-sm *ngFor="let program of PROGRAMS" (click)="goToProgram(program)">
+				<ion-card >
+					<ion-card-header>
+						{{ program.name }}
+					</ion-card-header>
+					<ion-card-content>
+						<img src="{{ program.imageURL }}" alt="{{ program.imageAlt }}">
+						{{ program.description }}
+					</ion-card-content>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
 
 </ion-content>

@@ -9,12 +9,12 @@ import { HomePage } from '../pages/home/home';
 import { ProgramPage } from '../pages/programs/program';
 import { TeamMembersPage } from '../pages/teamMembers/teamMembers';
 import { UserInfoPage } from '../pages/userInfo/userInfo';
+import { ConfirmPage } from '../pages/confirm/confirm';
+import { FinalPage } from '../pages/final/final';
 
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
 import { BoxCheckedValidator } from '../providers/checkBoxValidators/boxCheckedValidator';
-import { SlackMessaging } from '../providers/slackIntegration/slackMessaging';
-import { EmailComposer } from '@ionic-native/email-composer';
 
 @NgModule({
   declarations: [
@@ -22,7 +22,9 @@ import { EmailComposer } from '@ionic-native/email-composer';
     HomePage,
     ProgramPage,
     TeamMembersPage,
-    UserInfoPage
+    UserInfoPage,
+    ConfirmPage,
+    FinalPage
   ],
   imports: [
     BrowserModule,
@@ -36,15 +38,15 @@ import { EmailComposer } from '@ionic-native/email-composer';
     HomePage,
     ProgramPage,
     TeamMembersPage,
-    UserInfoPage
+    UserInfoPage,
+    ConfirmPage,
+    FinalPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     BoxCheckedValidator,
-    SlackMessaging,
-    EmailComposer
   ]
 })
 export class AppModule {}
